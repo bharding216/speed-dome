@@ -1,211 +1,76 @@
+<script context="module">
+	const ApiBaseUrl = 'https://hzlw7ocdo6owj22xn5vqnzjqs40waper.lambda-url.us-east-2.on.aws/api';
+</script>
+
 <script>
-	// import Slideshow from '/src/components/Slideshow.svelte';
+	import { onMount } from 'svelte';
+	import ProductsGrid from '../components/ProductsGrid.svelte';
 
-	let categories = [
-		{ name: 'SD01', heading: 'Dodge Hemi V8 Cylinder Heads' },
-		{ name: 'SD02', heading: 'Dodge Hemi V8 Water Pump Riser' },
-		{ name: 'SD03', heading: 'Brake & Clutch Assembly' },
-		{ name: 'SD04', heading: 'Throttle Pedal Assembly' },
-	];
+	let products = [];
 
-  	let selectedImage = null;
-	let selectedCategoryImages = [];
-  	let currentIndex = 0;
-	let currentCategoryHeading = '';
-  
-	function openOverlay(category) {
-		selectedCategoryImages = Array.from({ length: 5 }, (_, imageIndex) => `/${category}/${category}_${imageIndex}.jpg`);
-		currentIndex = 0;
-		selectedImage = selectedCategoryImages[currentIndex];
-		document.body.classList.add('overlay-open');
-		currentCategoryHeading = categories.find(c => c.name === category)?.heading || '';
-	}
+	onMount(async () => {
+		try {
+            const response = await fetch(ApiBaseUrl + '/products');
 
-	function navigate(direction) {
-		currentIndex = (currentIndex + direction + selectedCategoryImages.length) % selectedCategoryImages.length;
-		selectedImage = selectedCategoryImages[currentIndex];
-	}
+			if (response.ok) {
+				products = await response.json();
+			} else {
+				console.error('Failed to fetch products:', response.statusText);
+			}
+		} catch (error) {
+			console.error('Error fetching products:', error);
+		}
+	});
 
-	function closeOverlay() {
-		selectedImage = null;
-		document.body.classList.remove('overlay-open');
-		currentCategoryHeading = '';
-	}
-
-	const nextImage = () => navigate(1);
-	const prevImage = () => navigate(-1);
 </script>
 
 <svelte:head>
-	<title>32 Ford Custom Car Parts</title>
+	<title>Custom 32 Ford Equipment - Speed Dome Engineering</title>
 	<meta name="description" content="32 Ford Custom Car Parts" />
 </svelte:head>
 
 <section>
 
-	<div class="mb-5">
-		<img src="/32.jpg" id="hero-image" alt="Jack Chisenhall's AMBR Award-Winning 32 Ford">
-	</div>
+		<div class="pt-5 pb-5 parallax" style="min-height: 900px; position: relative;">
+			<div style="background: url('/32.jpg') no-repeat center center fixed; 
+						background-size: cover; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;"></div>
+			
+			<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
+						background: black; opacity: 0.5;"></div>
+			
+			<div class="container pb-5" style="position: relative; z-index: 2; padding-top: 75px;">
+				<div class="row mb-5 justify-content-center">   
+					<div class="col-12">
+						<div class="text-center">
+							<h1 style="color: white; font-size: 80px; font-weight: bold; letter-spacing: 5px;" class="pb-4">Unleash Performance, Embrace Style</h1>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 
 	<div class="py-5 mb-5">
-		<h1 class="text-center">A really nice quote here</h1>
+		<h1 class="text-center">A really compelling quote here</h1>
 	</div>
 
-	<div class="grid">
-		{#each categories as category}
-			<button on:click={() => openOverlay(category.name)} class="image-button">
-				<div class="image-container">
-					<img src={`/${category.name}/${category.name}_0.jpg`} alt="Our Products" class="product-image" />
-					<p class="image-heading">{category.heading}</p>
-					<button type="button" class="btn btn-primary">Button Text</button> 
-				</div>
-			</button>
-		{/each}
+	<div>
+		<ProductsGrid {products} />
 	</div>
-	
-	{#if selectedImage !== null}
-		<div class="overlay">
-			<button on:click={closeOverlay} class="close-button">✕</button>
-			<button on:click={prevImage} class="prev">&#8249;</button>
-			<div class="overlay-content">
-				<img src={selectedImage} alt="Maximized" class="maximized-image" />
-				<p class="overlay-heading">{currentCategoryHeading}</p>
-			</div>
-			<button on:click={nextImage} class="next">&#8250;</button>
-		</div>
-	{/if}
 
 </section>
 
 
 
 <style>
-	#hero-image {
-		width: 100%;
-		height: auto;
-	}
 
-	.grid {
-	  display: grid;
-	  grid-template-columns: repeat(2, 1fr);
-	  gap: 16px;
-	}
 
-	@media screen and (max-width: 767px) {
-		.grid {
-			grid-template-columns: 1fr; /* Single column for small screens */
-		}
-	}
-  
-	.image-button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-		border: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	.image-container {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		text-align: center;
-		width: 100%;
-		height: 400px;
-		overflow: hidden;
-		padding-bottom: 30px;
-	}
-
-	.product-image {
-	  width: 100%;
-	  height: 100%;
-	  object-fit: cover;
-	  margin-bottom: 8px;
-	}
-
-	.image-heading {
-		margin-top: 8px;
-		font-size: 14px;
-	}
-  
-
-	.overlay {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(0, 0, 0, 0.8);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: 1000;
-		backdrop-filter: blur(10px);
-	}
-  
-	.overlay-content {
-		max-width: 80%;
-		max-height: 80%;
-		background-color: #fff;
-		overflow: hidden;
-		position: relative;
-		border-radius: 8px; 
-		box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.maximized-image {
-	  width: 100%;
-	  height: 100%;
-	  object-fit: contain;
-	}
-
-    .prev, .next {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 60px;
-        cursor: pointer;
-        border: none;
-        background: none;
-        color: rgb(255, 255, 255);
-        outline: black;
-        display: inline-block;
-        background-color: none;
-        padding: 8px;
-    }
-
-    .prev {
-        left: 0;
-    }
-
-    .next {
-        right: 0;
-    }
-
-	.close-button {
-		position: absolute;
-		top: 10px;
-		right: 10px;
-		font-size: 24px;
-		cursor: pointer;
-		background: none;
-		border: none;
-		color: white;
-	}
-
-	.overlay-heading {
-		position: absolute;
-		top: 10px;
+	.parallax {
 		left: 50%;
-		transform: translateX(-50%);
-		font-size: 20px; 
-		color: white;
-	}
+		right: 50%;
+		width: 100vw;
+        margin-left: -50vw;
+        margin-right: -50vw;
+    }
 
 </style>

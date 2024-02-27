@@ -1,0 +1,22 @@
+<!-- ProductsGrid.svelte -->
+<script>
+    export let products;
+    import Product from './Product.svelte';
+</script>
+  
+<div class="products-grid">
+    {#each products as product (product.id)}
+        <Product {product} />
+    {/each}
+</div>
+  
+
+<style>
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+</style>
