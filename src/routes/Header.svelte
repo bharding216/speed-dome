@@ -21,21 +21,18 @@
 			<!--Links to the right-->
 			<div class="navbar-collapse collapse mb-3" id="navbarSupportedContent">
 				<ul class="navbar-nav ms-auto me-5">
-					<li aria-current={$page.url.pathname === '/portfolio' ? 'page' : undefined} class="nav-item">
-						<a href="/portfolio" class="nav-link">Portfolio</a>
-					</li>
-
 					<li aria-current={$page.url.pathname === '/about' ? 'page' : undefined} class="nav-item">
 						<a href="/about" class="nav-link">About</a>
 					</li>
 
-					<li aria-current={$page.url.pathname === '/services' ? 'page' : undefined} class="nav-item">
-						<a href="/services" class="nav-link">Services</a>
+					<li aria-current={$page.url.pathname === '/contact' ? 'page' : undefined} class="nav-item">
+						<a href="/contact" class="nav-link">Contact</a>
 					</li>
 
-					<li aria-current={$page.url.pathname === '/inquire' ? 'page' : undefined} class="nav-item">
-						<a href="/inquire" class="nav-link">Inquire</a>
+					<li aria-current={$page.url.pathname === '/cart' ? 'page' : undefined} class="nav-item">
+						<a href="/cart" class="nav-link">Cart</a>
 					</li>
+
 				</ul>
 			</div>
 		</div>
