@@ -1,3 +1,3 @@
-# Interior Design Website
+# E-Commerce Website for Automative Client
 
-This was an interior design website I made for a client.
+This was an e-commerce website I made for a client.
