@@ -16,9 +16,15 @@
 <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             <div class="row">
-                <div class="col-md-6 left-column">
+                <div class="col-12 text-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6 left-column order-2 order-sm-1">
                     {#if selectedProduct}
                         <img src={`/${selectedProduct?.part_number}/${selectedProduct?.part_number}_0.jpg`} alt={selectedProduct?.product_name} class="product-image"/>
                         <p class="product-description">{selectedProduct?.product_description}</p>
@@ -27,9 +33,12 @@
                     {/if}
                 </div>
     
-                <div class="col-md-6 product-details">
+                <div class="col-md-6 product-details order-1 order-sm-2">
                     <h5 class="mb-3">{selectedProduct?.product_name}</h5>
-                    <h5 class="mb-5">${selectedProduct?.price.toFixed(2)}</h5>
+                    <h5 class="mb-3">${selectedProduct?.price.toFixed(2)}</h5>
+                </div>
+
+                <div class="add-to-cart-div order-3 pt-5">
                     <div class="quantity-dropdown mb-4">
                         <label for="quantity">Quantity:</label>
                         <select class="form-select" id="quantity" name="quantity">
@@ -40,7 +49,7 @@
                             <option value="5">5</option>
                         </select>
                     </div>                    
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" on:click={handleAddToCart}>Add to cart</button>
+                    <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal" on:click={handleAddToCart}>Add to cart</button>
                 </div>
             </div>
         </div>
@@ -98,7 +107,6 @@
     .btn-close {
         padding-top: 20px;
         padding-right: 20px;
-        position: absolute;
         top: 10px;
         right: 10px;
         color: #000;

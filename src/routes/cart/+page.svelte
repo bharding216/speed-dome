@@ -115,25 +115,29 @@
 
 		<div class="row">
 			<div class="col-12">
-				<p>Total: ${cartItems.reduce((acc, item) => acc + item.price, 0).toFixed(2)}</p>
+				{#if cartItems.length > 0}
+					<p>Total: ${cartItems.reduce((acc, item) => acc + item.price, 0).toFixed(2)}</p>
+				{/if}
 			</div>
 		</div>
 
-		<div class="row">
+		<div class="row mb-5 mb-sm-0">
 			<div class="col-12">
-				<button type="button" class="btn btn-danger" on:click={handleClearCart}>Clear Cart</button>
+				{#if cartItems.length > 0}
+					<button type="button" class="btn btn-danger" on:click={handleClearCart}>Clear Cart</button>
+				{/if}
 			</div>
 		</div>
 	</div>
 
 	<div class="col-12 col-sm-6">
 		<div class="pb-4 card">
-			<h3>Shipping Address</h3>
+			<h4 class="mb-3">Shipping Address</h4>
 			<div id="address-element"></div>
 		</div>
 
 		<div class="card">
-			<h3>Payment</h3>
+			<h4 class="mb-3">Payment</h4>
 			<div id="payment-element"></div>
 		</div>
 
