@@ -55,6 +55,7 @@
         let message = form.get('message');
         let recaptchaResponse = grecaptcha.getResponse();
 
+        // update to https://hzlw7ocdo6owj22xn5vqnzjqs40waper.lambda-url.us-east-2.on.aws/api/contact
         const response = await fetch('https://2jealshrq3ogi6nfghzshfj5a40kdokp.lambda-url.us-east-2.on.aws/', {
             method: 'POST',
             headers: {
@@ -101,7 +102,7 @@
 </script>
 
 <div>
-    <h1 class="pb-4">Let's Build Your Dream Car Together</h1>
+    <h1 class="pb-4">We're here to help</h1>
 
     {#if confirmationMessage}
         <p class="confirmation">{confirmationMessage}</p>
@@ -127,41 +128,6 @@
                 placeholder="Phone" autocomplete="off" required>
             <label for="phone">Phone *</label>
             </div>
-        
-            <div class="form-floating mb-3 col-md-12 col-lg-6">
-            <input type="text" class="form-control" bind:value={formData.city} id="city" name="city"
-                placeholder="City" autocomplete="off">
-            <label for="city">City</label>
-            </div>
-
-            <div class="form-floating mb-3 col-md-12 col-lg-6">
-            <label for="projectType" style="display: none;">Project Type</label>
-            <select bind:value={formData.projectType} id="projectType" name="projectType" class="form-select" style="padding-top: 10px;">
-                <option value="" disabled>Select Project Type</option>
-                <option value="new-construction">New Construction</option>
-                <option value="renovation">Renovation</option>
-            </select>
-            </div>
-        
-        <div class="budget-div" style="margin-left: 10px">
-            <p class="mb-2">Project budget:</p>
-            <div class="form-check mb-3 col-md-12">
-                <div class="mb-2">
-                    <input type="radio" class="form-check-input" id="low_budget" name="projectBudget" value="50" bind:group={formData.projectBudget}>
-                    <label class="form-check-label" for="low_budget">&lt;$50k</label>
-                </div>
-                
-                <div class="mb-2">
-                    <input type="radio" class="form-check-input" id="med_budget" name="projectBudget" value="50_to_150" bind:group={formData.projectBudget}>
-                    <label class="form-check-label" for="med_budget">$50k - $150k</label>
-                </div>
-                
-                <div>
-                    <input type="radio" class="form-check-input" id="high_budget" name="projectBudget" value="150" bind:group={formData.projectBudget}>
-                    <label class="form-check-label" for="high_budget">$150k+</label>
-                </div>
-            </div>
-        </div>
 
         <div class="form-floating mb-3 col-md-12 col-lg-6">
             <textarea class="form-control" bind:value={formData.message} id="message" name="message"
