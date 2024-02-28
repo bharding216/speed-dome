@@ -52,6 +52,7 @@
 		};
 	});
 
+	// Handle the submission of the payment
 	const handleSubmit = async () => {
 		try {
 			const { error } = await stripe.confirmPayment({
