@@ -14,11 +14,15 @@
   
 
 <style>
-
     .products-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
         gap: 20px;
     }
 
+    @media (min-width: 800px) {
+        .products-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
 </style>
