@@ -68,7 +68,8 @@
 						name: 'Jenny Rosen',
 						phone: '4158675309'
 					},
-					return_url: `${window.location.origin}/cart`
+					return_url: `${window.location.origin}/payment-success`
+
 				}
 			});
 
@@ -77,7 +78,7 @@
 				console.log('Error type:', error.type);
 				console.log('Error message:', error.message);
 			} else {
-				message = 'Payment successful';
+				console.log('Payment successful');
 			}
 		} catch (error) {
 			console.log('Error confirming payment', error);
