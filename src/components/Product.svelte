@@ -31,6 +31,8 @@
         padding: 10px;
         margin: 10px;
         text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
     }
 
     .product-image {
