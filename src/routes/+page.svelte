@@ -5,8 +5,14 @@
 <script>
 	import { onMount } from 'svelte';
 	import ProductsGrid from '../components/ProductsGrid.svelte';
+	import ProductModal from '../components/ProductModal.svelte';
 
 	let products = [];
+	let selectedProduct = null;
+
+	function selectProduct(product) {
+		selectedProduct = product;
+	}
 
 	onMount(async () => {
 		try {
@@ -50,13 +56,15 @@
 		</div>
 
 
-	<div class="py-5 mb-5">
+	<div class="compelling-quote">
 		<h1 class="text-center">A really compelling quote here</h1>
 	</div>
 
 	<div>
-		<ProductsGrid {products} />
+		<ProductsGrid {products} {selectProduct} />
 	</div>
+
+	<ProductModal {selectedProduct} />
 
 </section>
 
@@ -64,6 +72,9 @@
 
 <style>
 
+	.compelling-quote {
+		padding: 150px 0 150px 0;
+	}
 
 	.parallax {
 		left: 50%;

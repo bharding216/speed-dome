@@ -1,12 +1,14 @@
-<!-- ProductsGrid.svelte -->
 <script>
     export let products;
+    export let selectProduct;
     import Product from './Product.svelte';
 </script>
   
+
+
 <div class="products-grid">
     {#each products as product (product.id)}
-        <Product {product} />
+        <Product {product} {selectProduct} />
     {/each}
 </div>
   
