@@ -37,8 +37,8 @@
 
 <section>
 
-		<div class="pt-5 pb-5 parallax" style="min-height: 900px; position: relative;">
-			<div style="background: url('/32.jpg') no-repeat center center fixed; 
+		<div class="pt-5 pb-5 parallax">
+			<div class="bg-image" style="background: url('/32.jpg') no-repeat center center; 
 						background-size: cover; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;"></div>
 			
 			<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
@@ -48,7 +48,7 @@
 				<div class="row mb-5 justify-content-center">   
 					<div class="col-12">
 						<div class="text-center">
-							<h1 style="color: white; font-size: 80px; font-weight: bold; letter-spacing: 5px;" class="pb-4">Unleash Performance, Embrace Style</h1>
+							<h1 style="color: white; font-weight: bold; letter-spacing: 5px;" class="pb-4">Unleash Performance, Embrace Style</h1>
 						</div>
 					</div>
 				</div>
@@ -57,7 +57,7 @@
 
 
 	<div class="compelling-quote">
-		<h1 class="text-center">A really compelling quote here</h1>
+		<h1 class="text-center mx-4">Add a really compelling quote here</h1>
 	</div>
 
 	<div>
@@ -82,6 +82,38 @@
 		width: 100vw;
         margin-left: -50vw;
         margin-right: -50vw;
+		min-height: 900px;
+        position: relative;
+    }
+
+    @media (max-width: 1200px) {
+        .parallax {
+            min-height: 700px;
+        }
+
+		.bg-image {
+			background-attachment: fixed;
+		}
+    }
+
+    @media (max-width: 992px) {
+        .parallax {
+            min-height: 500px;
+        }
+
+		.bg-image {
+			background-attachment: fixed;
+		}
+    }
+
+    @media (max-width: 768px) {
+        .parallax {
+            min-height: 300px;
+        }
+
+		.bg-image {
+			background-attachment: scroll;
+		}
     }
 
 </style>
