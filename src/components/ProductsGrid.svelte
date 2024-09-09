@@ -2,13 +2,14 @@
     export let products;
     export let selectProduct;
     import Product from './Product.svelte';
+    export let S3BaseUrl;
 </script>
   
 
 
 <div class="products-grid">
     {#each products as product (product.ID)}
-        <Product {product} {selectProduct} />
+        <Product {product} {selectProduct} S3BaseUrl={S3BaseUrl}/>
     {/each}
 </div>
   

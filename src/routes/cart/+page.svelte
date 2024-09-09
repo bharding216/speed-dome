@@ -8,11 +8,17 @@
 	import { onMount } from 'svelte';
 	// import { Stripe } from 'stripe';
 	import { loadStripe } from '@stripe/stripe-js';
+
+	// const ApiBaseUrl = 'https://hzlw7ocdo6owj22xn5vqnzjqs40waper.lambda-url.us-east-2.on.aws/api';
+	const ApiBaseUrl = 'http://localhost:3000/api';
+	const S3BaseUrl = 'https://speeddomebucket.s3.us-east-2.amazonaws.com/';
   
 	let stripe;
 	let elements;
 	let options;
 	let message = '';
+	let isProcessing = false;
+	let isLoading = false;
 
 	let cartItems = [];
 
@@ -25,51 +31,90 @@
 		stripe = await loadStripe('pk_test_51OnpWBDDaS82tif1vkx6CfoMEN20PjVL1HkoGVKBjtBbNC9DNgegnyO5unw9pglPOwyeLLIl79NTd1gQqFVgNZ4q00R0hFFrAS');
 		options = { mode: 'shipping' };
 
-		const { clientSecret, message } = await fetch('https://hzlw7ocdo6owj22xn5vqnzjqs40waper.lambda-url.us-east-2.on.aws/api/create-payment-intent').then((res) => res.json());
-
-		console.log('clientSecret:', clientSecret);
-		console.log('message:', message);
-
-		elements = stripe.elements({ clientSecret });
-		const paymentElement = elements.create('payment');
-		paymentElement.mount('#payment-element');
-
-		const addressElement = elements.create('address', options);
-		addressElement.mount('#address-element');
-
 		// Subscribe to changes in the cart store
 		const unsubscribe = cart.subscribe((items) => {
 			cartItems = items;
 			console.log('cartItems:', cartItems);
 		});
 
-		return () => {
-			// Clean up when the component is destroyed
-			paymentElement.destroy();
+		updatePaymentIntent();
 
-			// Unsubscribe from the store
+		return () => {
+			if (elements) elements.destroy();
 			unsubscribe();
 		};
 	});
 
+	async function updatePaymentIntent() {
+		isLoading = true;
+		try {
+			const total = cartItems.reduce((acc, item) => acc + (item.Price * item.quantity), 0);
+			console.log('Total:', total.toFixed(2));
+
+			if (total <= 0) {
+				console.log('Cart is empty or total is zero');
+				return;
+			}
+
+			const response = await fetch(ApiBaseUrl + '/create-payment-intent', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ amount: Math.round(total * 100) }) // Convert to cents and round
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
+			const data = await response.json();
+			console.log('Response from server:', data);
+
+			if (!data.clientSecret) {
+				throw new Error('No client secret received from the server');
+			}			
+
+			elements = stripe.elements({ clientSecret: data.clientSecret });
+			const paymentElement = elements.create('payment');
+			paymentElement.mount('#payment-element');
+
+			const addressElement = elements.create('address', options);
+			addressElement.mount('#address-element');
+
+		} catch (error) {
+			console.error('Error setting up payment:', error);
+			message = `Error: ${error.message}`;
+		} finally {
+			isLoading = false;
+		}
+    }
+
+
 	// Handle the submission of the payment
 	const handleSubmit = async () => {
+		if (isProcessing) return;
+
+		const { error: addressError } = await elements.getElement('address').getValue();
+		if (addressError) {
+			message = `Address error: ${addressError.message}`;
+			return;
+		}
+
+		isProcessing = true;
+
 		try {
 			const { error } = await stripe.confirmPayment({
 				elements,
 				confirmParams: {
-					shipping: {
-						address: {
-							city: 'San Francisco',
-							country: 'US',
-							line1: '1234 Main St',
-							postal_code: '94111',
-							state: 'CA'
-						},
-						name: 'Jenny Rosen',
-						phone: '4158675309'
-					},
-					return_url: `${window.location.origin}/payment-success`
+					return_url: `${window.location.origin}/payment-success`,
+					payment_method_data: {
+						billing_details: {
+							address: {
+								address: elements.getElement('address').getValue().value,
+							}
+						}
+					}
 
 				}
 			});
@@ -78,85 +123,106 @@
 				console.log('Payment failed');
 				console.log('Error type:', error.type);
 				console.log('Error message:', error.message);
+				message = error.message;
 			} else {
 				console.log('Payment successful');
+				message = 'Payment successful! Redirecting...';
+				clearCart();
+				setTimeout(() => {
+					window.location.href = `${window.location.origin}/payment-success`;
+				}, 2000); // Redirect after 2 seconds			
 			}
 		} catch (error) {
 			console.log('Error confirming payment', error);
+			message = 'Error confirming payment';
+		} finally {
+			isProcessing = false;
 		}
 	}
 
-
 </script>
 
-<p>{message}</p>
+{#if message}
+	<div class="alert alert-info">{message}</div>
+{/if}
 
 <div class="row">
-	<div class="col-12 col-sm-6">
-		<div class="row pb-3 pt-5">
-			<div class="col-12">
-				<h2>The Cart Page</h2>
-			</div>
-		</div>
+    <div class="col-12 col-sm-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Your Cart</h2>
+                {#if cartItems.length === 0}
+                    <p class="text-muted">Your cart is empty.</p>
+                {:else}
+                    <ul class="list-unstyled">
+                        {#each cartItems as item (item.ID)}
+                            <li class="cart-item mb-3 p-3 bg-light rounded">
+                                <div class="d-flex align-items-center">
+                                    <img 
+                                        src={S3BaseUrl}{item.ImageFilename[0]} 
+                                        alt={item.ProductName} 
+                                        class="img-thumbnail me-3" 
+                                        style="width: 80px; height: 80px; object-fit: cover;" 
+                                    />
+                                    <div>
+                                        <h5 class="mb-1">{item.ProductName}</h5>
+                                        <p class="mb-0 text-muted">Price: ${item.Price.toFixed(2)} | Quantity: {item.quantity}</p>
+                                        <p class="mb-0 fw-bold">Subtotal: ${(item.Price * item.quantity).toFixed(2)}</p>
+                                    </div>
+                                </div>
+                            </li>
+                        {/each}
+                    </ul>
 
-		<div class="row py-3">
-			<div class="col-12">
-				{#if cartItems.length === 0}
-					<p>Your cart is empty.</p>
-				{:else}
-					<ul>
-						{#each cartItems as item (item.ID)}
-							<li>{item.ProductName} - ${item.Price.toFixed(2)}</li>
-						{/each}
-					</ul>
-				{/if}
-			</div>
-		</div>
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <h4 class="mb-0">Total: ${cartItems.reduce((acc, item) => acc + (item.Price * item.quantity), 0).toFixed(2)}</h4>
+                        <button type="button" class="btn btn-outline-danger" on:click={handleClearCart}>Clear Cart</button>
+                    </div>
+                {/if}
+            </div>
+        </div>
+    </div>
 
-		<div class="row">
-			<div class="col-12">
-				{#if cartItems.length > 0}
-					<p>Total: ${cartItems.reduce((acc, item) => acc + item.Price, 0).toFixed(2)}</p>
-				{/if}
-			</div>
-		</div>
+    <div class="col-12 col-sm-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Shipping Address</h4>
+                <div id="address-element"></div>
+            </div>
+        </div>
 
-		<div class="row mb-5 mb-sm-0">
-			<div class="col-12">
-				{#if cartItems.length > 0}
-					<button type="button" class="btn btn-danger" on:click={handleClearCart}>Clear Cart</button>
-				{/if}
-			</div>
-		</div>
-	</div>
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Payment</h4>
+                <div id="payment-element"></div>
+            </div>
+        </div>
 
-	<div class="col-12 col-sm-6">
-		<div class="pb-4 card">
-			<h4 class="mb-3">Shipping Address</h4>
-			<div id="address-element"></div>
-		</div>
-
-		<div class="card">
-			<h4 class="mb-3">Payment</h4>
-			<div id="payment-element"></div>
-		</div>
-
-		<button id="submit" type="button" class="btn btn-success" on:click={handleSubmit}>
-			Place your order
-		</button>
-	</div>
-
-
+        <button 
+			id="submit" 
+			type="button" 
+			class="btn btn-success btn-lg w-100" 
+			on:click={handleSubmit}
+			disabled={isProcessing}
+		>
+			{isProcessing ? 'Processing...' : 'Place your order'}
+        </button>
+    </div>
 </div>
 
-
 <style>
-    .card {
-        border: 1px solid #ccc;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 4px;
+    .cart-item {
+        transition: all 0.3s ease;
     }
-
+    .cart-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card {
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .card:hover {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    }
 </style>

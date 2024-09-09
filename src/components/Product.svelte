@@ -1,6 +1,7 @@
 <script>
     export let product;
     export let selectProduct;
+    export let S3BaseUrl;
 </script>
   
 <div class="product">
@@ -13,11 +14,20 @@
     </div>
 
     <div class="pb-5">
-        <img src={`/${product.PartNumber}/${product.PartNumber}_0.jpg`} alt={product.ProductName} class="product-image"/>
+        <img 
+            src={`${S3BaseUrl}${product.ImageFilename[0]}`} 
+            alt={product.ProductName} 
+            class="product-image"
+        />
     </div>
 
     <div class="pb-4">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productDetailModal" on:click={() => selectProduct(product)}>
+        <button 
+            class="btn btn-primary" 
+            data-bs-toggle="modal" 
+            data-bs-target="#productDetailModal" 
+            on:click={() => selectProduct(product)}
+        >
             Click to view
         </button>
     </div>

@@ -132,7 +132,7 @@
         <div class="form-floating mb-3 col-md-12 col-lg-6">
             <textarea class="form-control" bind:value={formData.message} id="message" name="message"
                 placeholder="Message" style="height: 125px;"></textarea>
-            <label for="message">Message</label>
+            <label for="message">What's on your mind?</label>
         </div>   
 
         <div class="g-recaptcha mb-3" data-sitekey={siteKey}></div>

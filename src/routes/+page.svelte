@@ -1,17 +1,23 @@
 <script context="module">
-	const ApiBaseUrl = 'https://hzlw7ocdo6owj22xn5vqnzjqs40waper.lambda-url.us-east-2.on.aws/api';
+	// const ApiBaseUrl = 'https://hzlw7ocdo6owj22xn5vqnzjqs40waper.lambda-url.us-east-2.on.aws/api';
+	const ApiBaseUrl = 'http://localhost:3000/api';
+	const S3BaseUrl = 'https://speeddomebucket.s3.us-east-2.amazonaws.com/';
 </script>
 
 <script>
 	import { onMount } from 'svelte';
 	import ProductsGrid from '../components/ProductsGrid.svelte';
 	import ProductModal from '../components/ProductModal.svelte';
+	// import { clearCart } from '../stores/cartStore';
+
+	// clearCart();
 
 	let products = [];
 	let selectedProduct = null;
 
 	function selectProduct(product) {
 		selectedProduct = product;
+		console.log('Selected product:', selectedProduct);
 	}
 
 	onMount(async () => {
@@ -39,7 +45,7 @@
 <section>
 
 	<div class="pt-5 pb-5 parallax">
-		<div class="bg-image" style="background: url('/32.jpg') no-repeat center center; 
+		<div class="bg-image" style="background: url('{S3BaseUrl}32_ford.jpg') no-repeat center center; 
 					background-size: cover; position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;"></div>
 		
 		<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
@@ -57,21 +63,20 @@
 	</div>
 
 	<div class="compelling-quote">
-		<h1 class="text-center mx-4">Your Vision, Our Expertise: Collaborating for Your Perfect Build</h1>
+		<h1 class="text-center mx-4">Enhance Your Build with Custom 32 Ford Equipment</h1>	
 	</div>
 
 	<div>
-		<ProductsGrid {products} {selectProduct} />
+		<ProductsGrid {products} {selectProduct} S3BaseUrl={S3BaseUrl} />
 	</div>
 
-	<ProductModal {selectedProduct} />
+	<ProductModal {selectedProduct} S3BaseUrl={S3BaseUrl} />
 
 </section>
 
 
 
 <style>
-
 	.compelling-quote {
 		padding: 150px 0 150px 0;
 	}

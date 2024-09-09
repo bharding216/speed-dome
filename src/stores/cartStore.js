@@ -5,17 +5,26 @@ const initialCartState = loadCartState(); // Load initial state from storage
 
 export const cart = writable(initialCartState);
 
-export const addToCart = (product) => {
+export const addToCart = (product, quantity) => {
   cart.update((cartItems) => {
-    const updatedCart = [...cartItems, product];
-    saveCartState(updatedCart); // Save updated state to storage
-    return updatedCart;
+    const numQuantity = Number(quantity);
+
+    const existingProduct = cartItems.find((item) => item.id === product.id);
+
+    if (existingProduct) {
+      existingProduct.quantity = (existingProduct.quantity || 0) + numQuantity;
+    } else {  
+      cartItems.push({ ...product, quantity: numQuantity });
+    }
+
+    saveCartState(cartItems);
+    return cartItems;
   });
 };
 
 export const clearCart = () => {
   cart.set([]);
-  clearCartState(); // Clear state from storage
+  clearCartState();
 };
 
 // Helper functions for storage
