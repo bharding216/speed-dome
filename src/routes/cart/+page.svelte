@@ -161,7 +161,14 @@
 
 	async function getPaymentIntentId() {
 		console.log('Retrieving payment intent.');
-		const paymentIntent = await stripe.paymentIntents.retrieve(clientSecret);
+		if (!stripe) {
+			throw new Error('Stripe has not been initialized');
+		}
+		const { paymentIntent, error } = await stripe.retrievePaymentIntent(clientSecret);
+		if (error) {
+			console.error('Error retrieving payment intent:', error);
+			throw error;
+		}
 		console.log('Retrieved payment intent:', paymentIntent);
 		return paymentIntent.id;
 	}
