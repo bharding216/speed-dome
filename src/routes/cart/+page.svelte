@@ -20,6 +20,7 @@
 	let isProcessing = false;
 	let isLoading = false;
 	let userEmail = '';
+	let userPhone = '';
 
 	let cartItems = [];
 
@@ -117,7 +118,8 @@
 					payment_method_data: {
 						billing_details: {
 							email: userEmail,
-							address: addressValue
+							address: addressValue,
+							phone: userPhone
 						}
 					}
 				},
@@ -249,7 +251,7 @@
 						type="email" 
 						class="form-control" 
 						placeholder="Email" 
-						on:input={(e) => userEmail = e.target.value}
+						bind:value={userEmail}
 					/>
 
 					<label 
@@ -262,6 +264,7 @@
 						type="text" 
 						class="form-control" 
 						placeholder="Phone number"
+						bind:value={userPhone}
 					/>
 				</div>
             </div>
