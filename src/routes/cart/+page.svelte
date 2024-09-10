@@ -19,6 +19,7 @@
 	let message = '';
 	let isProcessing = false;
 	let isLoading = false;
+	let userEmail = '';
 
 	let cartItems = [];
 
@@ -61,7 +62,10 @@
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ amount: Math.round(total * 100) }) // Convert to cents and round
+				body: JSON.stringify({ 
+					amount: Math.round(total * 100),
+					email: userEmail
+				})
 			});
 
 			if (!response.ok) {
@@ -97,7 +101,7 @@
 
 		if (isProcessing) return;
 
-		const { error: addressError } = await elements.getElement('address').getValue();
+		const { error: addressError, value: addressValue } = await elements.getElement('address').getValue();
 		if (addressError) {
 			console.log('Address error:', addressError);
 			message = `Address error: ${addressError.message}`;
@@ -112,9 +116,8 @@
 				confirmParams: {
 					payment_method_data: {
 						billing_details: {
-							address: {
-								address: elements.getElement('address').getValue().value,
-							}
+							email: userEmail,
+							address: addressValue
 						}
 					}
 				},
@@ -229,6 +232,38 @@
             <div class="card-body">
                 <h4 class="card-title mb-3">Shipping Address</h4>
                 <div id="address-element"></div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h4 class="card-title mb-3">Contact Info</h4>
+                <div id="contact-info-element">
+					<label 
+						for="email" 
+						class="form-label"
+					>
+						Email
+					</label>
+					<input 
+						type="email" 
+						class="form-control" 
+						placeholder="Email" 
+						on:input={(e) => userEmail = e.target.value}
+					/>
+
+					<label 
+						for="phone" 
+						class="form-label mt-3"
+					>
+						Phone
+					</label>
+					<input 
+						type="text" 
+						class="form-control" 
+						placeholder="Phone number"
+					/>
+				</div>
             </div>
         </div>
 
