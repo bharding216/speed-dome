@@ -239,6 +239,10 @@
             </div>
         </div>
 
+		{#if message}
+			<div class="alert alert-info">{message}</div>
+		{/if}
+
         <button 
 			id="submit" 
 			type="button" 
