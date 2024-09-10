@@ -17,7 +17,6 @@
 
 	function selectProduct(product) {
 		selectedProduct = product;
-		console.log('Selected product:', selectedProduct);
 	}
 
 	onMount(async () => {
@@ -26,7 +25,6 @@
 
 			if (response.ok) {
 				products = await response.json();
-				console.log('Fetched products:', products);
 			} else {
 				console.error('Failed to fetch products:', response.statusText);
 			}

@@ -27,7 +27,6 @@
         emblaApi = event.detail;
         totalSlides = emblaApi.slideNodes().length;
         updateButtonStates();
-        console.log('Carousel initialized. Total slides:', totalSlides);
         emblaApi.on('select', onSelect);
         emblaApi.on('scroll', onScroll);
     }
@@ -39,10 +38,7 @@
             currentIndex = emblaApi.selectedScrollSnap();
         }        
         updateButtonStates();
-        console.log('Slide selected. Current index:', currentIndex);
     }
-
-    $: console.log('Current index updated:', currentIndex);
 
     function updateButtonStates() {
         canScrollPrev = emblaApi.canScrollPrev();
@@ -52,13 +48,11 @@
     function scrollPrev() {
         emblaApi.scrollPrev();
         currentIndex = emblaApi.selectedScrollSnap();
-        console.log('Scrolled to previous slide');
     }
 
     function scrollNext() {
         emblaApi.scrollNext();
         currentIndex = emblaApi.selectedScrollSnap();
-        console.log('Scrolled to next slide');
     }
 
     function onScroll() {
@@ -78,7 +72,6 @@
 
     $: if (selectedProduct) {
         totalSlides = selectedProduct.ImageFilename.length;
-        console.log('Selected product changed. New total slides:', totalSlides);
     }
 
     $: if (selectedProduct && emblaApi) {
@@ -86,7 +79,6 @@
         currentIndex = 0;
         emblaApi.scrollTo(0);
         updateButtonStates();
-        console.log('Carousel reinitialized due to product change');
     }
 
 </script>

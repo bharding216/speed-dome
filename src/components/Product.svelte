@@ -5,12 +5,12 @@
 </script>
   
 <div class="product">
-    <div class="py-3">
-        <h3>{product.ProductName}</h3>
+    <div class="pt-3">
+        <h3 class="mb-1">{product.ProductName}</h3>
     </div>
 
-    <div class="pb-1">
-        <p>${product.Price.toFixed(2)}</p>
+    <div class="pb-2">
+        <p class="text-muted">Part #: {product.PartNumber}</p>
     </div>
 
     <div class="pb-5">

@@ -104,7 +104,7 @@
 		isProcessing = true;
 
 		try {
-			const { error } = await stripe.confirmPayment({
+			const { error } = await stripe.confirmPayment({ // Only checks if the payment can be initiated
 				elements,
 				confirmParams: {
 					return_url: `${window.location.origin}/payment-success`,
@@ -125,18 +125,57 @@
 				console.log('Error message:', error.message);
 				message = error.message;
 			} else {
-				console.log('Payment successful');
-				message = 'Payment successful! Redirecting...';
-				clearCart();
-				setTimeout(() => {
-					window.location.href = `${window.location.origin}/payment-success`;
-				}, 2000); // Redirect after 2 seconds			
+				console.log('Payment initiated successfully, waiting for confirmation...');
+				const paymentIntentId = await getPaymentIntentId(); 
+				checkPaymentStatus(paymentIntentId);		
 			}
 		} catch (error) {
 			console.log('Error confirming payment', error);
 			message = 'Error confirming payment';
 		} finally {
 			isProcessing = false;
+		}
+	}
+
+	async function getPaymentIntentId() {
+		const paymentIntent = await stripe.retrievePaymentIntent();
+		return paymentIntent.id;
+	}
+
+	async function checkPaymentStatus(paymentIntentId) {
+		try {
+			const response = await fetch(ApiBaseUrl + '/payment-status/' + `${paymentIntentId}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ paymentIntentId })
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
+			const data = await response.json();
+			console.log('Payment status:', data.status);
+
+			if (data.status === 'succeeded') {
+				message = 'Payment succeeded!';
+				clearCart();
+				setTimeout(() => {
+					window.location.href = `${window.location.origin}/payment-success`;
+				}, 2000); // Redirect after 2 seconds
+				
+			} else if (data.status === 'failed') {
+				message = 'Payment failed';
+
+			} else {
+				// Poll every 3 seconds if payment is pending
+				setTimeout(() => checkPaymentStatus(paymentIntentId), 3000); 			
+			}
+
+		} catch (error) {
+			console.error('Error checking payment status:', error);
 		}
 	}
 

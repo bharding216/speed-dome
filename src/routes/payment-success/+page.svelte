@@ -1,1 +1,1 @@
-<h3>Thank you for your order!</h3>
+<h3>Thank you for your order! You'll receive an order confirmation via email. Let us know if you have any questions.</h3>
