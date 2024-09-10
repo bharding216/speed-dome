@@ -126,6 +126,7 @@
 							},							
 							email: userEmail,
 							phone: userPhone,
+							name: addressValue.name
 						}
 					}
 				},
