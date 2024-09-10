@@ -133,7 +133,7 @@
 			}
 		} catch (error) {
 			console.log('Error confirming payment', error);
-			message = 'Error confirming payment';
+			message = 'Error confirming payment: ' + error.message;
 		} finally {
 			isProcessing = false;
 		}
