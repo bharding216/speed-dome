@@ -118,12 +118,8 @@
 						billing_details: {
 							address: addressValue,
 							email: userEmail,
+							phone: userPhone,
 						}
-					},
-					shipping: {
-						address: addressValue,
-						name: addressValue.name,
-						phone: userPhone,
 					}
 				},
 				redirect: 'if_required'
