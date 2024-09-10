@@ -116,10 +116,14 @@
 				confirmParams: {
 					payment_method_data: {
 						billing_details: {
-							email: userEmail,
 							address: addressValue,
-							phone: userPhone
+							email: userEmail,
 						}
+					},
+					shipping: {
+						address: addressValue,
+						name: addressValue.name,
+						phone: userPhone,
 					}
 				},
 				redirect: 'if_required'
