@@ -9,8 +9,8 @@
 	// import { Stripe } from 'stripe';
 	import { loadStripe } from '@stripe/stripe-js';
 
-	// const ApiBaseUrl = 'https://hzlw7ocdo6owj22xn5vqnzjqs40waper.lambda-url.us-east-2.on.aws/api';
-	const ApiBaseUrl = 'http://localhost:3000/api';
+	const ApiBaseUrl = 'https://hzlw7ocdo6owj22xn5vqnzjqs40waper.lambda-url.us-east-2.on.aws/api';
+	// const ApiBaseUrl = 'http://localhost:3000/api';
 	const S3BaseUrl = 'https://speeddomebucket.s3.us-east-2.amazonaws.com/';
   
 	let stripe;
