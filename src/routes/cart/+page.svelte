@@ -39,7 +39,7 @@
 			console.log('cartItems:', cartItems);
 		});
 
-		updatePaymentIntent();
+		createPaymentIntent();
 
 		return () => {
 			if (elements) elements.destroy();
@@ -47,7 +47,7 @@
 		};
 	});
 
-	async function updatePaymentIntent() {
+	async function createPaymentIntent() {
 		isLoading = true;
 		try {
 			const total = cartItems.reduce((acc, item) => acc + (item.Price * item.quantity), 0);
@@ -65,6 +65,11 @@
 				},
 				body: JSON.stringify({ 
 					amount: Math.round(total * 100),
+					items: cartItems.map(item => ({
+						id: item.id,
+						quantity: item.quantity,
+						price: item.Price
+					})),
 				})
 			});
 
@@ -108,6 +113,8 @@
 			return;
 		}
 
+		console.log("Address value:", addressValue);
+
 		isProcessing = true;
 
 		try {
@@ -123,10 +130,7 @@
 								line2: addressValue.line2,
 								postal_code: addressValue.postal_code,
 								state: addressValue.state
-							},							
-							email: userEmail,
-							phone: userPhone,
-							name: addressValue.name
+							}						
 						}
 					}
 				},
@@ -141,7 +145,7 @@
 			} else {
 				console.log('Payment initiated successfully, waiting for confirmation...');
 				const paymentIntentId = await getPaymentIntentId(); 
-				checkPaymentStatus(paymentIntentId);		
+				checkPaymentStatus(paymentIntentId, addressValue);		
 			}
 		} catch (error) {
 			console.log('Error confirming payment', error);
@@ -156,7 +160,7 @@
 		return paymentIntent.id;
 	}
 
-	async function checkPaymentStatus(paymentIntentId) {
+	async function checkPaymentStatus(paymentIntentId, addressValue) {
 		try {
 			const response = await fetch(ApiBaseUrl + '/payment-status/' + `${paymentIntentId}`, {
 				method: 'GET',
@@ -174,6 +178,18 @@
 			console.log('Payment status:', data.status);
 
 			if (data.status === 'succeeded') {
+				console.log("Sending these parameters to the server:", { paymentIntent: { id: paymentIntentId, amount: total * 100 }, cartItems, userEmail, addressValue });
+
+				await updateDatabaseWithOrderDetails({
+					paymentIntent: { id: paymentIntentId, amount: total * 100 }, // Assuming total is in dollars, convert to cents
+					cartItems: cartItems,
+					userEmail: userEmail,
+					shippingAddress: addressValue,
+					firstName: addressValue.name.split(' ')[0],
+					lastName: addressValue.name.split(' ').slice(1).join(' '),
+					phone: userPhone
+				})
+
 				message = 'Payment succeeded!';
 				clearCart();
 				setTimeout(() => {
@@ -190,6 +206,28 @@
 
 		} catch (error) {
 			console.error('Error checking payment status:', error);
+		}
+	}
+
+	async function updateDatabaseWithOrderDetails(orderData) {
+		try {
+			const response = await fetch(ApiBaseUrl + '/process-order', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(orderData)
+			});
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
+			const data = await response.json();
+			console.log('Response from server:', data);
+
+		} catch (error) {
+			console.error('Error updating database with order details:', error);
 		}
 	}
 
@@ -247,33 +285,42 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <h4 class="card-title mb-3">Contact Info</h4>
-                <div id="contact-info-element">
-					<label 
-						for="email" 
-						class="form-label"
-					>
-						Email
-					</label>
-					<input 
-						type="email" 
-						class="form-control" 
-						placeholder="Email" 
-						bind:value={userEmail}
-					/>
 
-					<label 
-						for="phone" 
-						class="form-label mt-3"
-					>
-						Phone
-					</label>
-					<input 
-						type="text" 
-						class="form-control" 
-						placeholder="Phone number"
-						bind:value={userPhone}
-					/>
-				</div>
+				{#if isLoading}
+					<div class="spinner-border text-primary" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+
+				{:else}
+					<div id="contact-info-element">
+						<label 
+							for="email" 
+							class="form-label"
+						>
+							Email (required)
+						</label>
+						<input 
+							required
+							type="email" 
+							class="form-control" 
+							placeholder="Email" 
+							bind:value={userEmail}
+						/>
+
+						<label 
+							for="phone" 
+							class="form-label mt-3"
+						>
+							Phone
+						</label>
+						<input 
+							type="text" 
+							class="form-control" 
+							placeholder="Phone number"
+							bind:value={userPhone}
+						/>
+					</div>
+				{/if}
             </div>
         </div>
 
