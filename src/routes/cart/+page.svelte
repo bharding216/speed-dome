@@ -160,7 +160,9 @@
 	}
 
 	async function getPaymentIntentId() {
-		const paymentIntent = await stripe.retrievePaymentIntent(clientSecret);
+		console.log('Retrieving payment intent.');
+		const paymentIntent = await stripe.paymentIntents.retrieve(clientSecret);
+		console.log('Retrieved payment intent:', paymentIntent);
 		return paymentIntent.id;
 	}
 
