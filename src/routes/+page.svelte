@@ -83,10 +83,11 @@
 		left: 50%;
 		right: 50%;
 		width: 100vw;
-        margin-left: -50vw;
-        margin-right: -50vw;
+        margin-left: -51vw;
+        margin-right: -51vw;
 		min-height: 900px;
         position: relative;
+
     }
 
     @media (max-width: 1200px) {
