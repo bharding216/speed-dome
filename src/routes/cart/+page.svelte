@@ -189,7 +189,7 @@
 			const data = await response.json();
 			console.log('Payment status:', data.status);
 
-			if (data.status === 'success') {
+			if (data.status === 'succeeded') {
 				console.log("Sending these parameters to the server:", { paymentIntent: { id: paymentIntentId, amount: total * 100 }, cartItems, userEmail, addressValue });
 
 				await updateDatabaseWithOrderDetails({
