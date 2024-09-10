@@ -93,10 +93,13 @@
 
 	// Handle the submission of the payment
 	const handleSubmit = async () => {
+		console.log('Submitting payment');
+
 		if (isProcessing) return;
 
 		const { error: addressError } = await elements.getElement('address').getValue();
 		if (addressError) {
+			console.log('Address error:', addressError);
 			message = `Address error: ${addressError.message}`;
 			return;
 		}
@@ -107,7 +110,6 @@
 			const { error } = await stripe.confirmPayment({ // Only checks if the payment can be initiated
 				elements,
 				confirmParams: {
-					return_url: `${window.location.origin}/payment-success`,
 					payment_method_data: {
 						billing_details: {
 							address: {
@@ -115,8 +117,8 @@
 							}
 						}
 					}
-
-				}
+				},
+				redirect: 'if_required'
 			});
 
 			if (error) {
