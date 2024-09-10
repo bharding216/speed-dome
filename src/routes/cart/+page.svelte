@@ -191,10 +191,10 @@
 			console.log('Payment status:', data.status);
 
 			if (data.status === 'succeeded') {
-				console.log("Sending these parameters to the server:", { paymentIntent: { id: paymentIntentId, amount: total * 100 }, cartItems, userEmail, addressValue });
+				console.log('Payment succeeded!');
 
 				await updateDatabaseWithOrderDetails({
-					paymentIntent: { id: paymentIntentId, amount: total * 100 }, // Assuming total is in dollars, convert to cents
+					paymentIntent: { id: paymentIntentId, amount: total * 100 },
 					cartItems: cartItems,
 					userEmail: userEmail,
 					shippingAddress: addressValue,
@@ -224,6 +224,8 @@
 
 	async function updateDatabaseWithOrderDetails(orderData) {
 		try {
+			console.log('Updating database with order details:', orderData);
+
 			const response = await fetch(ApiBaseUrl + '/process-order', {
 				method: 'POST',
 				headers: {
