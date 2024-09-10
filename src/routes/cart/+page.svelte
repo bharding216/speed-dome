@@ -116,7 +116,14 @@
 				confirmParams: {
 					payment_method_data: {
 						billing_details: {
-							address: addressValue,
+							address: {
+								city: addressValue.city,
+								country: addressValue.country,
+								line1: addressValue.line1,
+								line2: addressValue.line2,
+								postal_code: addressValue.postal_code,
+								state: addressValue.state
+							},							
 							email: userEmail,
 							phone: userPhone,
 						}
