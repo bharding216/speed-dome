@@ -21,6 +21,7 @@
 	let isLoading = false;
 	let userEmail = '';
 	let userPhone = '';
+	let clientSecret = '';
 
 	let cartItems = [];
 
@@ -82,7 +83,9 @@
 
 			if (!data.clientSecret) {
 				throw new Error('No client secret received from the server');
-			}			
+			}		
+			
+			clientSecret = data.clientSecret;
 
 			elements = stripe.elements({ clientSecret: data.clientSecret });
 			const paymentElement = elements.create('payment');
@@ -156,7 +159,7 @@
 	}
 
 	async function getPaymentIntentId() {
-		const paymentIntent = await stripe.retrievePaymentIntent();
+		const paymentIntent = await stripe.retrievePaymentIntent(clientSecret);
 		return paymentIntent.id;
 	}
 
