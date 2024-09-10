@@ -65,7 +65,6 @@
 				},
 				body: JSON.stringify({ 
 					amount: Math.round(total * 100),
-					email: userEmail
 				})
 			});
 
