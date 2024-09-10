@@ -22,6 +22,7 @@
 	let userEmail = '';
 	let userPhone = '';
 	let clientSecret = '';
+	let total = 0;
 
 	let cartItems = [];
 
@@ -51,7 +52,7 @@
 	async function createPaymentIntent() {
 		isLoading = true;
 		try {
-			const total = cartItems.reduce((acc, item) => acc + (item.Price * item.quantity), 0);
+			total = cartItems.reduce((acc, item) => acc + (item.Price * item.quantity), 0);
 			console.log('Total:', total.toFixed(2));
 
 			if (total <= 0) {
