@@ -116,7 +116,8 @@
 			return;
 		}
 
-		console.log("Address value:", addressValue);
+		// addressValue is a JSON object with the address fields like city, 
+		// country, line1, line2, postal_code, state
 
 		isProcessing = true;
 
@@ -169,8 +170,7 @@
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ paymentIntentId })
+				}
 			});
 
 			if (!response.ok) {
@@ -180,7 +180,7 @@
 			const data = await response.json();
 			console.log('Payment status:', data.status);
 
-			if (data.status === 'succeeded') {
+			if (data.status === 'success') {
 				console.log("Sending these parameters to the server:", { paymentIntent: { id: paymentIntentId, amount: total * 100 }, cartItems, userEmail, addressValue });
 
 				await updateDatabaseWithOrderDetails({
